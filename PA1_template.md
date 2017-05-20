@@ -1,11 +1,5 @@
----
-title: 'Reproducible Research: Peer Assessment 1'
-author: "Geoff Skellams"
-output:
-  html_document:
-    keep_md: yes
-  pdf_document: default
----
+# Reproducible Research: Peer Assessment 1
+Geoff Skellams  
 
 
 ## Loading and preprocessing the data
@@ -29,7 +23,8 @@ The CSV file contains data in three separate columns, as explained in the origin
 > * **date:** The date on which the measurement was taken in YYYY-MM-DD format
 > * **interval:** Identifier for the 5-minute interval in which measurement was taken
 
-```{r loadData, message = FALSE, warning = FALSE}
+
+```r
 # set some knitr options. Messages and warnings from the R code chunks are suppressed to clean up the output.
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align="center")
 
@@ -53,6 +48,17 @@ activityData$date <- as.Date(as.character(activityData$date))
 summary(activityData)
 ```
 
+```
+##      steps             date               interval     
+##  Min.   :  0.00   Min.   :2012-10-01   Min.   :   0.0  
+##  1st Qu.:  0.00   1st Qu.:2012-10-16   1st Qu.: 588.8  
+##  Median :  0.00   Median :2012-10-31   Median :1177.5  
+##  Mean   : 37.38   Mean   :2012-10-31   Mean   :1177.5  
+##  3rd Qu.: 12.00   3rd Qu.:2012-11-15   3rd Qu.:1766.2  
+##  Max.   :806.00   Max.   :2012-11-30   Max.   :2355.0  
+##  NA's   :2304
+```
+
 * * * *
 ## What is mean total number of steps taken per day?
 
@@ -68,7 +74,8 @@ In order to discover the average number of steps taken each day, we first need t
 
 A histogram of the total number of steps taken per day is shown in **Figure 1**, below the R source code.
 
-```{r calculateMeanSteps}
+
+```r
 # sum the number of steps per day
 stepsPerDay <- group_by(activityData, date) %>% summarize(totalSteps = sum(steps))
 
@@ -91,9 +98,11 @@ dsPlot <- ggplot(stepsPerDay, aes(totalSteps)) +
 print(dsPlot)
 ```
 
-The mean total daily steps (shown as a red line on the histogram) is **`r sprintf("%.2f", meanDailySteps)`**.
+<img src="PA1_template_files/figure-html/calculateMeanSteps-1.png" style="display: block; margin: auto;" />
 
-The median total daily steps is **`r medianDailySteps`**.
+The mean total daily steps (shown as a red line on the histogram) is **10766.19**.
+
+The median total daily steps is **10765**.
 
 * * * *
 ## What is the average daily activity pattern?
@@ -109,7 +118,8 @@ The results of these calculations are shown in **Figure 2**, below.
 
 The most active time is the interval with the highest average number of steps.
 
-```{r dailyActivityTrend}
+
+```r
 # calculate the daily activity
 dailyActivity <- group_by(activityData, interval) %>% summarize(intervalMean = mean(steps, na.rm = TRUE))
 
@@ -131,7 +141,9 @@ daPlot <- ggplot(dailyActivity, aes(interval, intervalMean)) +
 print(daPlot)
 ```
 
-The subject's most active time, averaged across all days in the data, is **`r formattedMostActiveTime`**.
+<img src="PA1_template_files/figure-html/dailyActivityTrend-1.png" style="display: block; margin: auto;" />
+
+The subject's most active time, averaged across all days in the data, is **0835**.
 
 * * * *
 ## Imputing missing values
@@ -149,7 +161,8 @@ Following the suggestion in the requirements, the NA values in the **steps** var
 
 **Figure 3** shows a comparison plot between the original histogram (previously shown in **Figure 1**) and the corresponding histogram with the missing values imputed.
 
-```{r imputeMissing}
+
+```r
 # determine which values are missing from the steps column
 stepsMissing <- is.na(activityData$steps)
 
@@ -197,21 +210,23 @@ dsPlot2 <- ggplot(combinedStepsPerDay, aes(totalSteps)) +
 print(dsPlot2)
 ```
 
+<img src="PA1_template_files/figure-html/imputeMissing-1.png" style="display: block; margin: auto;" />
+
 As can be see from a comparison of the two plots, the replacement of the NA values with the mean value for the corresponding inverval adds **eight days** worth of data to the bin containing the overall mean. No other bin's values are altered by the imputation of the missing data points.
 
 #### Requirement 1: Number of missing values in the activity dataset
 
-The number of missing values in the activity dataset is **`r naCount`**.
+The number of missing values in the activity dataset is **2304**.
 
 #### Reqiurement 4: Comparison of Mean and Median values before and after Imputation
 
 Before the NA values were imputed, the mean total daily steps (shown as a red line on the histogram) was 
-**`r sprintf("%.2f", meanDailySteps)`**. After the missing values were imputed, the mean total daily steps
-is **`r sprintf("%.2f", meanDailyStepsFull)`**. As can be seen, the mean values have not changed at all.
+**10766.19**. After the missing values were imputed, the mean total daily steps
+is **10766.19**. As can be seen, the mean values have not changed at all.
 
 
-Before imputation, the median total daily steps was **`r sprintf("%.2f", medianDailySteps)`**. After the missing values
-were replaced, the median value became **`r sprintf("%.2f", medianDailyStepsFull)`**. This is the same as the mean value, and a slight increase over the median of the pre-imputation dataset.
+Before imputation, the median total daily steps was **10765.00**. After the missing values
+were replaced, the median value became **10766.19**. This is the same as the mean value, and a slight increase over the median of the pre-imputation dataset.
 
 * * * *
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -228,7 +243,8 @@ The weekdays() function returns a string containing the name of the day that the
 **Figure 4** shows a comparison of the time series plots for average weekday and weekend activity.
 
 
-```{r weekendTrends}
+
+```r
 #------------------------------------------------------------------------------------------------------------
 # Function Name:    weekdayOrNot()
 # Function Summary: Given a date object, determine whether it is a weekday or a weekend
@@ -269,8 +285,10 @@ daPlot2 <- ggplot(dayTypeAnalysis, aes(interval, intervalMean)) +
 print(daPlot2)
 ```
 
+<img src="PA1_template_files/figure-html/weekendTrends-1.png" style="display: block; margin: auto;" />
+
 In answer to the question corresponding to this section, the subjects activities do vary depending on whether it is a weekday or a weekend. 
 
-Typically, the subject is more active overall on weekends. The average number of steps per five minute interval on a weekday is **`r sprintf("%.2f", weekdayMean)`**, while the average number of steps in each interval on weekends was **`r sprintf("%.2f", weekendMean)`**.
+Typically, the subject is more active overall on weekends. The average number of steps per five minute interval on a weekday is **35.61**, while the average number of steps in each interval on weekends was **42.37**.
 
 However, the subject typically walks further in mid-morning intervals on weekdays when compared to weekends, although the rest of each weekday tends to be less active that the corresponding times at the weekends.
